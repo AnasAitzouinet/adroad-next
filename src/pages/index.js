@@ -1,5 +1,4 @@
 import { Footer } from "../../components/Footer";
-import { Header } from "../../components/Header";
 import {
   ArrowUturnLeftIcon,
   Bars3Icon,
@@ -16,6 +15,7 @@ import {
   UsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 
 const features = [
   {
@@ -143,12 +143,12 @@ export default function Home() {
                       Lectus viverra dui tellus ornare pharetra.
                     </p>
                     <div className="mt-6">
-                      <a
+                      <Link
                         href="#"
                         className="inline-flex rounded-md border border-transparent bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-2 text-base font-medium text-white shadow-sm hover:from-purple-700 hover:to-indigo-700"
                       >
                         Get started
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -207,12 +207,12 @@ export default function Home() {
                       Lectus viverra dui tellus ornare pharetra.
                     </p>
                     <div className="mt-6">
-                      <a
+                      <Link
                         href="#"
                         className="inline-flex rounded-md border border-transparent bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-2 text-base font-medium text-white shadow-sm hover:from-purple-700 hover:to-indigo-700"
                       >
                         Get started
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -312,18 +312,18 @@ export default function Home() {
               </span>
             </h2>
             <div className="mt-6 space-y-4 sm:flex sm:space-y-0 sm:space-x-5">
-              <a
+              <Link
                 href="#"
                 className="flex items-center justify-center rounded-md border border-transparent bg-gradient-to-r from-purple-600 to-indigo-600 bg-origin-border px-4 py-3 text-base font-medium text-white shadow-sm hover:from-purple-700 hover:to-indigo-700"
               >
                 Learn more
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#"
                 className="flex items-center justify-center rounded-md border border-transparent bg-indigo-50 px-4 py-3 text-base font-medium text-indigo-800 shadow-sm hover:bg-indigo-100"
               >
                 Get started
-              </a>
+              </Link>
             </div>
           </div>
         </div>

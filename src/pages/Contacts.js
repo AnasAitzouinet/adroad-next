@@ -4,6 +4,7 @@ import { Popover, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { Footer } from '../../components/Footer'
+import Link from 'next/link'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -23,14 +24,14 @@ export default function Example() {
             aria-label="Global"
           >
             <div className="flex w-full items-center justify-between lg:w-auto">
-              <a href="#">
+              <Link href="#">
                 <span className="sr-only">Your Company</span>
                 <img
                   className="h-8 w-auto sm:h-10"
                   src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=600"
                   alt=""
                 />
-              </a>
+              </Link>
               <div className="-mr-2 flex items-center lg:hidden">
                 <Popover.Button className="focus-ring-inset inline-flex items-center justify-center rounded-md bg-gray-50 p-2 text-gray-400 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-grape-500">
                   <span className="sr-only">Open main menu</span>
@@ -40,18 +41,18 @@ export default function Example() {
             </div>
             <div className="hidden space-x-10 lg:ml-10 lg:flex">
               {navigation.map((item) => (
-                <a key={item.name} href={item.href} className="text-base font-medium text-gray-500 hover:text-gray-600">
+                <Link key={item.name} href={item.href} className="text-base font-medium text-gray-500 hover:text-gray-600">
                   {item.name}
-                </a>
+                </Link>
               ))}
             </div>
             <div className="hidden lg:flex lg:items-center lg:space-x-6">
-              <a
+              <Link
                 href="#contact"
                 className="rounded-md border border-transparent bg-white py-2 px-6 text-base font-medium text-grape-600 shadow-md hover:bg-gray-50"
               >
                 Contact
-              </a>
+              </Link>
             </div>
           </nav>
         </div>
@@ -85,22 +86,22 @@ export default function Example() {
               <div className="pt-5 pb-6">
                 <div className="space-y-1 px-2">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
                       href={item.href}
                       className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50"
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
                 <div className="mt-6 px-5">
-                  <a
+                  <Link
                     href="#"
                     className="block w-full rounded-md border border-transparent bg-grape-500 py-2 px-4 text-center font-medium text-white shadow hover:bg-grape-600"
                   >
                     Contact
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -325,13 +326,13 @@ export default function Example() {
               <span className="block text-white">Looking for a new career?</span>
               <span className="block text-grape-900">We’re hiring.</span>
             </h2>
-            <a
+            <Link
               href="#"
               className="mt-8 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-white py-3 px-5 text-base font-medium text-grape-600 shadow-md hover:bg-grape-50 sm:w-auto"
             >
               <span>See open positions</span>
               <ArrowTopRightOnSquareIcon className="ml-3 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-            </a>
+            </Link>
           </div>
         </div>
       </main>

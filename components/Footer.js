@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import React from 'react'
+
 const footerNavigation = {
     solutions: [
       { name: 'Marketing', href: '#' },
@@ -92,6 +94,7 @@ const footerNavigation = {
 export const Footer = () => {
     return (
         <footer className="bg-gray-50" aria-labelledby="footer-heading">
+          
             <h2 id="footer-heading" className="sr-only">
                 Footer
             </h2>
@@ -104,9 +107,9 @@ export const Footer = () => {
                                 <ul role="list" className="mt-4 space-y-4">
                                     {footerNavigation.solutions.map((item) => (
                                         <li key={item.name}>
-                                            <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                                            <Link href={item.href} className="text-base text-gray-500 hover:text-gray-900">
                                                 {item.name}
-                                            </a>
+                                            </Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -116,9 +119,9 @@ export const Footer = () => {
                                 <ul role="list" className="mt-4 space-y-4">
                                     {footerNavigation.support.map((item) => (
                                         <li key={item.name}>
-                                            <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                                            <Link href={item.href} className="text-base text-gray-500 hover:text-gray-900">
                                                 {item.name}
-                                            </a>
+                                            </Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -130,9 +133,9 @@ export const Footer = () => {
                                 <ul role="list" className="mt-4 space-y-4">
                                     {footerNavigation.company.map((item) => (
                                         <li key={item.name}>
-                                            <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                                            <Link href={item.href} className="text-base text-gray-500 hover:text-gray-900">
                                                 {item.name}
-                                            </a>
+                                            </Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -142,9 +145,9 @@ export const Footer = () => {
                                 <ul role="list" className="mt-4 space-y-4">
                                     {footerNavigation.legal.map((item) => (
                                         <li key={item.name}>
-                                            <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                                            <Link href={item.href} className="text-base text-gray-500 hover:text-gray-900">
                                                 {item.name}
-                                            </a>
+                                            </Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -183,10 +186,10 @@ export const Footer = () => {
                 <div className="mt-12 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between lg:mt-16">
                     <div className="flex space-x-6 md:order-2">
                         {footerNavigation.social.map((item) => (
-                            <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
+                            <Link key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
                                 <span className="sr-only">{item.name}</span>
                                 <item.icon className="h-6 w-6" aria-hidden="true" />
-                            </a>
+                            </Link>
                         ))}
                     </div>
                     <p className="mt-8 text-base text-gray-400 md:order-1 md:mt-0">

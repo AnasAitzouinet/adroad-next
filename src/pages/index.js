@@ -70,6 +70,7 @@ import { useState } from 'react'
 import { Hero } from "../../components/Hero";
 import Head from "next/head";
 
+
 const navigation = [
   { name: 'Product', href: '#' },
   { name: 'Features', href: '#' },

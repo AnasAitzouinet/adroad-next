@@ -7,7 +7,7 @@ export default function Document() {
       <title>Adroad</title>
 
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.0/dist/sweetalert2.min.css" />
-      <script difer="true" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
       <body>
         <Main />

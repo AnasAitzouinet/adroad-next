@@ -3,7 +3,7 @@ import { useState } from 'react'
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-export default function login() {
+export default function Login() {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();

@@ -68,6 +68,7 @@ const metrics = [
 import { Dialog } from '@headlessui/react'
 import { useState } from 'react'
 import { Hero } from "../../components/Hero";
+import Head from "next/head";
 
 const navigation = [
   { name: 'Product', href: '#' },
@@ -80,6 +81,7 @@ export default function Home() {
 
   return (
     <>
+
       <main>
         {/* Hero section */}
         {/* <Header/> */}

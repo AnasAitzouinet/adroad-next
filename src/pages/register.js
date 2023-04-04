@@ -1,19 +1,60 @@
 import Link from 'next/link'
+import { useState } from 'react'
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default function Register() {
+
+    const [username, setUsername] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('/api/auth/register', {
+                username,
+                email,
+                password,
+            });
+
+            console.log(response.data);
+
+            // Display success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration successful!',
+                text: 'Thank you for registering.',
+            });
+        } catch (error) {
+            console.error(error);
+
+            // Display error message
+            Swal.fire({
+                icon: 'error',
+                title: 'Registration error',
+                text: error.response.data.message,
+            });
+        }
+    };
+
     return (
         <>
             <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <img
-                        className="mx-auto h-12 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                        alt="Your Company"
-                    />
+                    <Link href="/">
+                        <img
+                            className="mx-auto h-12 w-auto"
+                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                            alt="AdRoad"
+                        />
+
+                    </Link>
                     <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Create new account</h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
                         Or{' '}
-                        <Link href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                        <Link href="login" className="font-medium text-indigo-600 hover:text-indigo-500">
                             log in to your account
                         </Link>
                     </p>
@@ -21,7 +62,7 @@ export default function Register() {
 
                 <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                        <form className="space-y-6" action="#" method="POST">
+                        <form className="space-y-6" onSubmit={handleSubmit} method="POST">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
                                     Username
@@ -31,6 +72,8 @@ export default function Register() {
                                         id="name"
                                         name="name"
                                         type="text"
+                                        onChange={(e) => setUsername(e.target.value)}
+
                                         required
                                         className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                     />
@@ -47,6 +90,7 @@ export default function Register() {
                                         name="email"
                                         type="email"
                                         autoComplete="email"
+                                        onChange={(e) => setEmail(e.target.value)}
                                         required
                                         className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                     />
@@ -63,6 +107,7 @@ export default function Register() {
                                         name="password"
                                         type="password"
                                         autoComplete="current-password"
+                                        onChange={(e) => setPassword(e.target.value)}
                                         required
                                         className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                     />
@@ -77,16 +122,12 @@ export default function Register() {
                                         type="checkbox"
                                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     />
-                                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                                        Remember me
+                                    <label htmlFor="remember-me" className="ml-2 text-xs  block text-gray-900">
+                                        Accepte terms and privacy policy
                                     </label>
                                 </div>
 
-                                <div className="text-sm">
-                                    <Link href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                                        Forgot your password?
-                                    </Link>
-                                </div>
+                               
                             </div>
 
                             <div>

@@ -2,9 +2,31 @@ import Link from 'next/link'
 import { useState } from 'react'
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useRouter } from 'next/router';
+
+export async function getServerSideProps({req,res}) {
+  const token = req.cookies.token;
+
+
+  if (token) {
+    // User is already authenticated, redirect to dashboard
+    return {
+      redirect: {
+        destination: '/Dashboard',
+        permanent: false,
+      },
+    };
+  }
+
+  // User is not authenticated, render the login page
+  return {
+    props: {},
+  };
+}
+
 
 export default function Login() {
-
+  const router = useRouter();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [remember, setRemember] = useState(false)
@@ -19,13 +41,15 @@ export default function Login() {
         password,
       });
 
-      console.log(response.data);
 
       // Display success message
       Swal.fire({
         icon: 'success',
         title: 'Login successful!',
         text: 'Thank you for Login in.',
+      }).then(() => {
+        // Redirect to another page after alert is closed
+        router.push('/Dashboard');
       });
 
     } catch (error) {
@@ -59,6 +83,8 @@ export default function Login() {
             </Link>
           </p>
         </div>
+
+        
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">

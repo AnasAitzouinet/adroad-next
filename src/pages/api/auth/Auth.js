@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import prisma from '../../../../lib/prisma';
 
-
 const authMiddleware = async (req, res, next) => {
   try {
     // Check if token exists in cookies
@@ -22,7 +21,7 @@ const authMiddleware = async (req, res, next) => {
       return next();
     }
 
-    // Log user in automatically
+    // Set user object on request
     req.user = user;
     next();
   } catch (error) {

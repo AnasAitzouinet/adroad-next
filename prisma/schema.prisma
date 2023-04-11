@@ -8,12 +8,42 @@ datasource db {
 }
 
 model User {
-  id            Int    @id @default(autoincrement())
-  username      String
+  id            Int       @id @default(autoincrement())
+  firstname     String
+  lastname      String
+  avatar        String
+  phone_number  Int
   email         String    @unique
   password      String
   createdAt     DateTime  @default(now())
   emailVerified DateTime?
+  Role          UserType  @default(Client)
+  drivers       Driver[]  @relation("DriverRelation")
+  clients       Client[]  @relation("ClientRelation")
 
   @@map("users")
+}
+
+enum UserType {
+  Client
+  Driver
+}
+
+model Client {
+  id           Int     @id @default(autoincrement())
+  company_name String  @unique
+  budget       Decimal
+  users        User[]  @relation("ClientRelation")
+
+  @@map("clients")
+}
+
+model Driver {
+  id        Int     @id @default(autoincrement())
+  revenue   Decimal
+  car_model String
+  car_miles String
+  users     User[]  @relation("DriverRelation")
+
+  @@map("drivers")
 }

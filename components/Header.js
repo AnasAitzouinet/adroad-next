@@ -62,7 +62,7 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
                     ))}
                 </div>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                    <Link href="login" className="text-sm font-semibold leading-6 text-white">
+                    <Link href="Authentication/login" className="text-sm font-semibold leading-6 text-white">
                         Log in <span aria-hidden="true">&rarr;</span>
                     </Link>
                 </div>
@@ -98,7 +98,7 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
                             </div>
                             <div className="py-6">
                                 <Link
-                                    href="sign"
+                                    href="Authentiocation/login"
                                     className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-6 text-white hover:bg-gray-400/10"
                                 >
                                     Log in

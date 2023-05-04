@@ -25,7 +25,25 @@ function classNames(...classes) {
 }
 export const SideBar = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
 
+    const handleLogoutClick = async () => {
+      try {
+        setIsLoading(true);
+  
+        const response = await fetch('/api/auth/logout', { method: 'POST' });
+  
+        if (response.ok) {
+          window.location.href = 'Authentication/login';
+        } else {
+          console.error(response.statusText);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     return (
         <div>
 
@@ -201,7 +219,7 @@ export const SideBar = () => {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <Link
-                                                href="settings"
+                                                href="Dashboard/settings"
                                                 className={classNames(
                                                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                     'block px-4 py-2 text-sm'
@@ -244,15 +262,15 @@ export const SideBar = () => {
                                 <div className="py-1">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <Link
-                                                href="#"
-                                                className={classNames(
-                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                    'block px-4 py-2 text-sm'
-                                                )}
+                                            <Link href='' onClick={handleLogoutClick}
+                                              className={classNames(
+                                                'block px-4 py-2 text-sm',
+                                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                              )}
                                             >
-                                                Logout
-                                            </Link>
+                                              {isLoading ? 'Logging out...' : 'Logout'}
+                                            
+                                          </Link>
                                         )}
                                     </Menu.Item>
                                 </div>

@@ -5,6 +5,7 @@ import authMiddleware from './Auth';
 import { serialize } from 'cookie';
 import ms from 'ms';
 
+
 export default async function handler(req, res) {
   await authMiddleware(req, res, async () => {
     if (req.method !== 'POST') {

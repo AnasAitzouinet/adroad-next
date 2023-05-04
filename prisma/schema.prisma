@@ -8,18 +8,21 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
+  userName      String   @default("user")
   firstname     String
-  lastname      String
-  avatar        String
-  phone_number  Int
-  email         String    @unique
+  lastname      String?
+  avatar        String?
+  about         String?
+  phone_number  Int?
+  email         String   @unique
   password      String
-  createdAt     DateTime  @default(now())
-  emailVerified DateTime?
-  Role          UserType  @default(Client)
-  drivers       Driver[]  @relation("DriverRelation")
-  clients       Client[]  @relation("ClientRelation")
+  createdAt     DateTime @default(now())
+  emailVerified Boolean? @default(false)
+  acceptedRules Boolean? @default(false)
+  Role          UserType @default(Client)
+  drivers       Driver[] @relation("DriverRelation")
+  clients       Client[] @relation("ClientRelation")
 
   @@map("users")
 }

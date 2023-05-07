@@ -20,7 +20,8 @@ export async function getServerSideProps({ req, res }) {
     }
 
     // Retrieve registration data from cookie
-    const { firstName, email,hashedPassword } = JSON.parse(registrationData);
+    const { firstName, email, hashedPassword, rules } =
+      JSON.parse(registrationData);
 
     // Pass the registration data as props to the component
     return {
@@ -28,7 +29,7 @@ export async function getServerSideProps({ req, res }) {
         registrationData: {
           firstName,
           email,
-          hashedPassword
+          hashedPassword,
         },
       },
     };
@@ -51,56 +52,61 @@ export default function SecondStep({ registrationData }) {
     about: "",
     avatar: null,
     lastName: "",
-    firstName: registrationData.firstName,
+    firstname: registrationData.firstName,
     email: registrationData.email,
     adress: "",
     city: "",
     zipcode: "",
-    phoneNumber: null,
+    phone_number: NaN,
     userType: "",
   });
 
   const handleInputChange = (e) => {
-
     const { name, value, files } = e.target;
-
+  
     if (name === "avatar") {
-      setUser({ ...user, avatar: files[0] });
+      const file = files[0];
+      if (file.size > 5*1024*1024) { // 5 MB expressed in bytes
+        alert("File size should not exceed 1 MB");
+        return;
+      }
+      setUser({ ...user, avatar: file });
     } else {
       setUser({ ...user, [name]: value });
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
-      userName: user.userName,
-      about: user.about,
-      firstName: user.firstName,
-      email: user.email,
-      address: user.address,
-      city: user.city,
-      zipcode: user.zipcode,
-      phoneNumber: user.phoneNumber,
-      userType: user.userType,
-      avatar: null // we will update this later
-    };
-  
-    // upload image to Cloudinary
     const formDataImage = new FormData();
     formDataImage.append("file", user.avatar);
     formDataImage.append("upload_preset", "my_upload_preset");
     formDataImage.append("folder", "your_folder_name");
-  
-    const { data } = await axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
+
+    const {data} = await axios.post(
+      `https://api.cloudinary.com/v1_1/df2j87kme/image/upload`,
       formDataImage
     );
-  
+
     // update formData with the image URL from Cloudinary
-    formData.avatar = data.secure_url;
-    try {
-      const response = await axios.post("/api/auth/register", formData,);
+    const imageUrl = data.secure_url;
+    const formData = {
+      userName: user.userName,
+      about: user.about,
+      firstname: user.firstname,
+      lastName: user.lastName,
+      email: user.email,
+      adress: user.adress,
+      city: user.city,
+      zipcode: user.zipcode,
+      phone_number: user.phone_number,
+      userType: user.userType,
+      avatar: imageUrl, // we will update this later
+    };
+   
+        try {
+      const response = await axios.post("/api/auth/register", formData);
       // Display success message
       Swal.fire({
         icon: "success",
@@ -108,7 +114,7 @@ export default function SecondStep({ registrationData }) {
         text: "Thank you for registering.",
       }).then(() => {
         // Redirect to another page after alert is closed
-        router.push("/Authentication/login");
+        router.push("/Authentication/Second-Step/VerifyCode");
       });
     } catch (error) {
       console.error(error);
@@ -160,6 +166,7 @@ export default function SecondStep({ registrationData }) {
                         setUser({ ...user, userName: e.target.value })
                       }
                       id="username"
+                      required
                       autoComplete="username"
                       className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
@@ -225,6 +232,8 @@ export default function SecondStep({ registrationData }) {
                             name="avatar"
                             id="avatar"
                             type="file"
+                            size="10000000"
+                            required
                             accept=".jpg, .png, .gif, .jpeg"
                             onChange={handleInputChange}
                             className="sr-only"
@@ -234,10 +243,11 @@ export default function SecondStep({ registrationData }) {
                       </div>
                       {user.avatar && (
                         <Image
-                        width={200} height={200}
-                        src={URL.createObjectURL(user.avatar)}
-                        alt="avatar"
-                        className="pt-2 pb-2 pl-1"
+                          width={200}
+                          height={200}
+                          src={URL.createObjectURL(user.avatar)}
+                          alt="avatar"
+                          className="pt-2 pb-2 pl-1"
                         />
                       )}
                       <p className="text-xs text-gray-500">
@@ -270,10 +280,11 @@ export default function SecondStep({ registrationData }) {
                 <div className="mt-1 sm:col-span-2 sm:mt-0">
                   <input
                     type="text"
-                    name="firstName"
-                    value={user.firstName}
+                    name="firstname"
+                    value={user.firstname}
+                    required
                     onChange={(e) =>
-                      setUser({ ...user, firstName: e.target.value })
+                      setUser({ ...user, firstname: e.target.value })
                     }
                     id="first-name"
                     autoComplete="given-name"
@@ -294,6 +305,7 @@ export default function SecondStep({ registrationData }) {
                     type="text"
                     name="lastName"
                     id="last-name"
+                    required
                     onChange={(e) =>
                       setUser({ ...user, lastName: e.target.value })
                     }
@@ -315,6 +327,7 @@ export default function SecondStep({ registrationData }) {
                     id="email"
                     name="email"
                     type="email"
+                    required
                     value={user.email}
                     onChange={(e) =>
                       setUser({ ...user, email: e.target.value })
@@ -339,6 +352,7 @@ export default function SecondStep({ registrationData }) {
                     onChange={(e) =>
                       setUser({ ...user, adress: e.target.value })
                     }
+                    required
                     id="street-address"
                     autoComplete="street-address"
                     className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -357,6 +371,7 @@ export default function SecondStep({ registrationData }) {
                   <input
                     type="text"
                     name="city"
+                    required
                     onChange={(e) => setUser({ ...user, city: e.target.value })}
                     id="city"
                     autoComplete="address-level2"
@@ -377,6 +392,10 @@ export default function SecondStep({ registrationData }) {
                     type="text"
                     name="postal-code"
                     id="postal-code"
+                    required
+                    onChange={(e) =>
+                      setUser({ ...user, zipcode: e.target.value })
+                    }
                     autoComplete="postal-code"
                     className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm"
                   />
@@ -392,13 +411,14 @@ export default function SecondStep({ registrationData }) {
                 </label>
                 <div className="mt-1 sm:col-span-2 sm:mt-0">
                   <input
-                    type="text"
-                    name="postal-code"
-                    id="postal-code"
+                    type="tel"
+                    name="phone_number"
+                    id="phone_number"
+                    required
                     onChange={(e) =>
-                      setUser({ ...user, phoneNumber: e.target.value })
+                      setUser({ ...user, phone_number: e.target.value })
                     }
-                    autoComplete="postal-code"
+                    autoComplete="phone_number"
                     className="block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm"
                   />
                 </div>
@@ -425,6 +445,7 @@ export default function SecondStep({ registrationData }) {
                           id="push-everything"
                           name="push-notifications"
                           type="radio"
+                          required
                           onChange={(e) =>
                             setUser({ ...user, userType: "Client" })
                           }
@@ -442,6 +463,7 @@ export default function SecondStep({ registrationData }) {
                           id="push-email"
                           name="push-notifications"
                           type="radio"
+                          required
                           onChange={(e) =>
                             setUser({ ...user, userType: "Driver" })
                           }

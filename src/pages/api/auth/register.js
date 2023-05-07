@@ -1,7 +1,23 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import prisma from "../../../../lib/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client";
+import {
+  generateVerificationCode,
+  sendVerificationCode,
+} from "../VerificationCode/sender";
+import cookie from "cookie";
+
+const isEmailValid = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+const isPhoneNumberValid = (phoneNumber) => {
+  const phoneRegex = /^\d{10}$/;
+  return phoneRegex.test(phoneNumber);
+};
+const isZipcodeValid = (zipcode) => {
+  const zipcodeRegex = /^\d{5}$/;
+  return zipcodeRegex.test(zipcode);
+};
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -9,59 +25,92 @@ export default async function handler(req, res) {
   }
 
   const {
-    firstName,
+    userName,
+    firstname,
     lastName,
     email,
     avatar,
-    phoneNumber,
-    address,
+    adress,
     userType,
     zipcode,
     city,
     about,
+    phone_number,
   } = req.body;
 
+  // Validate all input fields
+  if (
+    !firstname ||
+    !lastName ||
+    !email ||
+    !avatar ||
+    !adress ||
+    !userType ||
+    !zipcode ||
+    !city ||
+    !about ||
+    !phone_number
+  ) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  if (!isEmailValid(email)) {
+    return res.status(400).json({ message: "Invalid email" });
+  }
+
+  if (!isPhoneNumberValid(phone_number)) {
+    return res.status(400).json({ message: "Invalid phone number" });
+  }
+
+  if (!isZipcodeValid(zipcode)) {
+    return res.status(400).json({ message: "Invalid zipcode" });
+  }
+
   try {
-    // upload image to Cloudinary
-    const formDataImage = new FormData();
-    formDataImage.append("file", avatar);
-    formDataImage.append("upload_preset", "my_upload_preset");
-    formDataImage.append("folder", "your_folder_name");
+    const registrationData = req.cookies.registrationData;
+    const { hashedPassword, rules } = JSON.parse(registrationData);
+    const num = Number(phone_number);
+    const sendEmail = await sendVerificationCode(email);
 
-    const { data } = await axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
-      formDataImage
-    );
-
-    // create user with data and image URL from Cloudinary
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await prisma.user.create({
+    const user = await prisma.VerificationCode.create({
       data: {
         email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        avatar: data.secure_url,
-        phoneNumber,
-        address,
-        userType,
-        zipcode,
-        city,
-        about,
+        VerificationCode:sendEmail
       },
     });
+    
+    const Confirmation = {
+      userName,
+      firstname,
+      lastName,
+      avatar,
+      adress,
+      userType,
+      zipcode,
+      city,
+      about,
+      email,
+      hashedPassword,
+      rules,
+      num
+    };
+    console.log(Confirmation);
+    const cookieValue = JSON.stringify(Confirmation);
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 900,
+    };
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-
-    res.setHeader(
-      "Set-Cookie",
-      `token=${token}; HttpOnly; Secure; SameSite=None`
+    const serializedCookie = cookie.serialize(
+      "Confirmation",
+      cookieValue,
+      cookieOptions
     );
-    res.setHeader(
-      "Set-Cookie",
-      `registrationData=; HttpOnly; Secure; SameSite=None; Expires=Thu, 01 Jan 1970 00:00:00 GMT`
-    ); // Delete the registration data cookie
+
+    res.setHeader("Set-Cookie", serializedCookie);
 
     res.status(200).json({ message: "User created successfully" });
   } catch (error) {

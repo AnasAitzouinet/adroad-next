@@ -36,7 +36,7 @@ export default async function handler(req, res) {
         expiresIn = '30d'; // set longer expiry time if remember me is checked
       }
 
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn });
+      const token = jwt.sign({ userId: user.id , LoggedIn: true }, process.env.JWT_SECRET, { expiresIn });
 
       const cookieOptions = {
         httpOnly: true,

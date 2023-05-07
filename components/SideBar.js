@@ -23,7 +23,7 @@ const teams = [
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
-export const SideBar = () => {
+export const SideBar = ({username , avatar}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false);
 
@@ -177,12 +177,11 @@ export const SideBar = () => {
                                     <span className="flex min-w-0 items-center justify-between space-x-3">
                                         <img
                                             className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                                            src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
-                                            alt=""
+                                            src={avatar}                                            alt=""
                                         />
                                         <span className="flex min-w-0 flex-1 flex-col">
-                                            <span className="truncate text-sm font-medium text-gray-900">Jessy Schwarz</span>
-                                            <span className="truncate text-sm text-gray-500">@jessyschwarz</span>
+                                            <span className="truncate text-sm font-medium text-gray-900">{username}</span>
+                                            <span className="truncate text-sm text-gray-500">@{username}</span>
                                         </span>
                                     </span>
                                     <ChevronUpDownIcon

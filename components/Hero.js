@@ -19,7 +19,7 @@ import { Header } from './Header'
 import Link from 'next/link'
 
 
-export const Hero = () => {
+export const Hero = ({Logged , username , avatar}) => {
 
     return (
         <div className="relative isolate overflow-hidden bg-gray-900">
@@ -55,7 +55,7 @@ export const Hero = () => {
             </div>
             <div className="px-6 lg:px-8">
 
-                <Header />
+                <Header Logged={Logged} username={username} avatar={avatar}/>
 
                 <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
                     

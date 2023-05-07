@@ -14,79 +14,146 @@ import {
   TrashIcon,
   UsersIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline'
-import Link from 'next/link'
-
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import jwt from "jsonwebtoken";
 const features = [
   {
-    name: 'Unlimited Inboxes',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Unlimited Inboxes",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: InboxIcon,
   },
   {
-    name: 'Manage Team Members',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Manage Team Members",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: UsersIcon,
   },
   {
-    name: 'Spam Report',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Spam Report",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: TrashIcon,
   },
   {
-    name: 'Compose in Markdown',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Compose in Markdown",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: PencilSquareIcon,
   },
   {
-    name: 'Team Reporting',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Team Reporting",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: DocumentChartBarIcon,
   },
   {
-    name: 'Saved Replies',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Saved Replies",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: ArrowUturnLeftIcon,
   },
   {
-    name: 'Email Commenting',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Email Commenting",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: ChatBubbleLeftEllipsisIcon,
   },
   {
-    name: 'Connect with Customers',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: "Connect with Customers",
+    description:
+      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
     icon: HeartIcon,
   },
-]
+];
 const metrics = [
-  { id: 1, stat: '8K+', emphasis: 'Companies', rest: 'use laoreet amet lacus nibh integer quis.' },
-  { id: 2, stat: '25K+', emphasis: 'Countries around the globe', rest: 'lacus nibh integer quis.' },
-  { id: 3, stat: '98%', emphasis: 'Customer satisfaction', rest: 'laoreet amet lacus nibh integer quis.' },
-  { id: 4, stat: '12M+', emphasis: 'Issues resolved', rest: 'lacus nibh integer quis.' },
-]
-import { Dialog } from '@headlessui/react'
-import { useState } from 'react'
+  {
+    id: 1,
+    stat: "8K+",
+    emphasis: "Companies",
+    rest: "use laoreet amet lacus nibh integer quis.",
+  },
+  {
+    id: 2,
+    stat: "25K+",
+    emphasis: "Countries around the globe",
+    rest: "lacus nibh integer quis.",
+  },
+  {
+    id: 3,
+    stat: "98%",
+    emphasis: "Customer satisfaction",
+    rest: "laoreet amet lacus nibh integer quis.",
+  },
+  {
+    id: 4,
+    stat: "12M+",
+    emphasis: "Issues resolved",
+    rest: "lacus nibh integer quis.",
+  },
+];
+import { Dialog } from "@headlessui/react";
+import { useState } from "react";
 import { Hero } from "../../components/Hero";
 import Head from "next/head";
 
-
 const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
-  { name: 'Company', href: '#' },
-]
+  { name: "Product", href: "#" },
+  { name: "Features", href: "#" },
+  { name: "Marketplace", href: "#" },
+  { name: "Company", href: "#" },
+];
+export async function getServerSideProps({ req, res }) {
+  try {
+    // Check if token exists in cookies
+    const token = req.cookies.token;
+    // Verify token and get user ID
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
+    // Get user from database
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    // Fetch additional data for the user from the database
+    const userData = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        userName: true,
+        avatar: true,
+      },
+    });
 
-export default function Home() {
+    return {
+      props: {
+        userData,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {},
+    };
+  }
+}
+
+export default function Home({ userData }) {
+  const [logout, setLogout] = useState(userData);
 
   return (
     <>
-
       <main>
         {/* Hero section */}
         {/* <Header/> */}
-        <Hero />
+        {logout && (
+          <Hero
+            Logged={logout}
+            username={userData.userName}
+            avatar={userData.avatar}
+          />
+        )}
+        <Hero
+          Logged={logout}
+          
+        />
 
         {/* Logo Cloud */}
         <div className="bg-gray-100">
@@ -96,10 +163,18 @@ export default function Home() {
             </p>
             <div className="mt-6 grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
               <div className="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img className="h-12" src="https://tailwindui.com/img/logos/tuple-logo-gray-400.svg" alt="Tuple" />
+                <img
+                  className="h-12"
+                  src="https://tailwindui.com/img/logos/tuple-logo-gray-400.svg"
+                  alt="Tuple"
+                />
               </div>
               <div className="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
-                <img className="h-12" src="https://tailwindui.com/img/logos/mirage-logo-gray-400.svg" alt="Mirage" />
+                <img
+                  className="h-12"
+                  src="https://tailwindui.com/img/logos/mirage-logo-gray-400.svg"
+                  alt="Mirage"
+                />
               </div>
               <div className="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
                 <img
@@ -128,22 +203,32 @@ export default function Home() {
 
         {/* Alternating Feature Sections */}
         <div className="relative overflow-hidden pt-16 pb-32">
-          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-gray-100" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-gray-100"
+          />
           <div className="relative">
             <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8">
               <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0">
                 <div>
                   <div>
                     <span className="flex h-12 w-12 items-center justify-center rounded-md bg-gradient-to-r from-purple-600 to-indigo-600">
-                      <InboxIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                      <InboxIcon
+                        className="h-6 w-6 text-white"
+                        aria-hidden="true"
+                      />
                     </span>
                   </div>
                   <div className="mt-6">
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900">Stay on top of customer support</h2>
+                    <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+                      Stay on top of customer support
+                    </h2>
                     <p className="mt-4 text-lg text-gray-500">
-                      Semper curabitur ullamcorper posuere nunc sed. Ornare iaculis bibendum malesuada faucibus lacinia
-                      porttitor. Pulvinar laoreet sagittis viverra duis. In venenatis sem arcu pretium pharetra at.
-                      Lectus viverra dui tellus ornare pharetra.
+                      Semper curabitur ullamcorper posuere nunc sed. Ornare
+                      iaculis bibendum malesuada faucibus lacinia porttitor.
+                      Pulvinar laoreet sagittis viverra duis. In venenatis sem
+                      arcu pretium pharetra at. Lectus viverra dui tellus ornare
+                      pharetra.
                     </p>
                     <div className="mt-6">
                       <Link
@@ -159,8 +244,9 @@ export default function Home() {
                   <blockquote>
                     <div>
                       <p className="text-base text-gray-500">
-                        &ldquo;Cras velit quis eros eget rhoncus lacus ultrices sed diam. Sit orci risus aenean
-                        curabitur donec aliquet. Mi venenatis in euismod ut.&rdquo;
+                        &ldquo;Cras velit quis eros eget rhoncus lacus ultrices
+                        sed diam. Sit orci risus aenean curabitur donec aliquet.
+                        Mi venenatis in euismod ut.&rdquo;
                       </p>
                     </div>
                     <footer className="mt-3">
@@ -197,7 +283,10 @@ export default function Home() {
                 <div>
                   <div>
                     <span className="flex h-12 w-12 items-center justify-center rounded-md bg-gradient-to-r from-purple-600 to-indigo-600">
-                      <SparklesIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                      <SparklesIcon
+                        className="h-6 w-6 text-white"
+                        aria-hidden="true"
+                      />
                     </span>
                   </div>
                   <div className="mt-6">
@@ -205,9 +294,11 @@ export default function Home() {
                       Better understand your customers
                     </h2>
                     <p className="mt-4 text-lg text-gray-500">
-                      Semper curabitur ullamcorper posuere nunc sed. Ornare iaculis bibendum malesuada faucibus lacinia
-                      porttitor. Pulvinar laoreet sagittis viverra duis. In venenatis sem arcu pretium pharetra at.
-                      Lectus viverra dui tellus ornare pharetra.
+                      Semper curabitur ullamcorper posuere nunc sed. Ornare
+                      iaculis bibendum malesuada faucibus lacinia porttitor.
+                      Pulvinar laoreet sagittis viverra duis. In venenatis sem
+                      arcu pretium pharetra at. Lectus viverra dui tellus ornare
+                      pharetra.
                     </p>
                     <div className="mt-6">
                       <Link
@@ -236,22 +327,32 @@ export default function Home() {
         {/* Gradient Feature Section */}
         <div className="bg-gradient-to-r from-purple-800 to-indigo-700">
           <div className="mx-auto max-w-4xl py-16 px-6 sm:pt-20 sm:pb-24 lg:max-w-7xl lg:px-8 lg:pt-24">
-            <h2 className="text-3xl font-bold tracking-tight text-white">Inbox support built for efficiency</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-white">
+              Inbox support built for efficiency
+            </h2>
             <p className="mt-4 max-w-3xl text-lg text-purple-200">
-              Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis. Blandit
-              aliquam sit nisl euismod mattis in.
+              Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et
+              magna sit morbi lobortis. Blandit aliquam sit nisl euismod mattis
+              in.
             </p>
             <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-16">
               {features.map((feature) => (
                 <div key={feature.name}>
                   <div>
                     <span className="flex h-12 w-12 items-center justify-center rounded-md bg-white bg-opacity-10">
-                      <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
+                      <feature.icon
+                        className="h-6 w-6 text-white"
+                        aria-hidden="true"
+                      />
                     </span>
                   </div>
                   <div className="mt-6">
-                    <h3 className="text-lg font-medium text-white">{feature.name}</h3>
-                    <p className="mt-2 text-base text-purple-200">{feature.description}</p>
+                    <h3 className="text-lg font-medium text-white">
+                      {feature.name}
+                    </h3>
+                    <p className="mt-2 text-base text-purple-200">
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -287,16 +388,23 @@ export default function Home() {
                 Get actionable data that will help grow your business
               </p>
               <p className="mt-5 text-lg text-gray-300">
-                Rhoncus sagittis risus arcu erat lectus bibendum. Ut in adipiscing quis in viverra tristique sem. Ornare
-                feugiat viverra eleifend fusce orci in quis amet. Sit in et vitae tortor, massa. Dapibus laoreet amet
-                lacus nibh integer quis. Eu vulputate diam sit tellus quis at.
+                Rhoncus sagittis risus arcu erat lectus bibendum. Ut in
+                adipiscing quis in viverra tristique sem. Ornare feugiat viverra
+                eleifend fusce orci in quis amet. Sit in et vitae tortor, massa.
+                Dapibus laoreet amet lacus nibh integer quis. Eu vulputate diam
+                sit tellus quis at.
               </p>
               <div className="mt-12 grid grid-cols-1 gap-y-12 gap-x-6 sm:grid-cols-2">
                 {metrics.map((item) => (
                   <p key={item.id}>
-                    <span className="block text-2xl font-bold text-white">{item.stat}</span>
+                    <span className="block text-2xl font-bold text-white">
+                      {item.stat}
+                    </span>
                     <span className="mt-1 block text-base text-gray-300">
-                      <span className="font-medium text-white">{item.emphasis}</span> {item.rest}
+                      <span className="font-medium text-white">
+                        {item.emphasis}
+                      </span>{" "}
+                      {item.rest}
                     </span>
                   </p>
                 ))}
@@ -333,5 +441,5 @@ export default function Home() {
       </main>
       <Footer />
     </>
-  )
+  );
 }

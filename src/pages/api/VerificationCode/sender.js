@@ -27,8 +27,8 @@ export async function sendVerificationCode(email) {
     port: 465,
     secure: true,
     auth: {
-      user:"apikey",
-      pass:'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'
+      user:process.env.SEND_Email_Name,
+      pass: process.env.SEND_EMAIL
     },
   });
   const mailOptions = {
